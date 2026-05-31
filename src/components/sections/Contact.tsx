@@ -31,25 +31,30 @@ export function Contact() {
         .insert({ id, ...parsed.data });
       if (insertError) throw insertError;
 
-      // Notify the business (always fire, but don't block UX if it errors)
-      supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "booking-notification",
-          recipientEmail: "hello@stewpidlygood.no",
-          idempotencyKey: `booking-notify-${id}`,
-          templateData: parsed.data,
-        },
-      });
+      const [notification, confirmation] = await Promise.all([
+        supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "booking-notification",
+            recipientEmail: "hello@stewpidlygood.no",
+            idempotencyKey: `booking-notify-${id}`,
+            templateData: parsed.data,
+          },
+        }),
+        supabase.functions.invoke("send-transactional-email", {
+          body: {
+            templateName: "booking-confirmation",
+            recipientEmail: parsed.data.email,
+            idempotencyKey: `booking-confirm-${id}`,
+            templateData: { name: parsed.data.name },
+          },
+        }),
+      ]);
 
-      // Auto-confirmation to submitter
-      supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "booking-confirmation",
-          recipientEmail: parsed.data.email,
-          idempotencyKey: `booking-confirm-${id}`,
-          templateData: { name: parsed.data.name },
-        },
-      });
+      if (notification.error || confirmation.error) {
+        console.error("Email send failed", { notification, confirmation });
+        toast.error("REQUEST SAVED — EMAIL IS DELAYED");
+        return;
+      }
 
       toast.success("REQUEST SENT — WE'LL BE IN TOUCH");
       setForm({ name: "", email: "", phone: "", details: "" });

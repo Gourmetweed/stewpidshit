@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X, Instagram } from "lucide-react";
+import { Menu, X, Instagram, Mail } from "lucide-react";
 
 const links = [
   { href: "#home", label: "HOME" },
@@ -8,7 +8,6 @@ const links = [
   { href: "#events", label: "EVENTS" },
   { href: "#story", label: "STORY" },
   { href: "#gallery", label: "GALLERY" },
-  { href: "#contact", label: "CONTACT" },
 ];
 
 export function Nav() {
@@ -21,6 +20,9 @@ export function Nav() {
           {links.map(l => (
             <a key={l.href} href={l.href} className="font-display text-xs text-white/80 hover:text-mustard transition-colors tracking-[0.15em]">{l.label}</a>
           ))}
+          <a href="mailto:hello@stewpidlygood.no" className="font-display text-xs text-white/80 hover:text-mustard transition-colors tracking-[0.15em] inline-flex items-center gap-1">
+            <Mail size={14} /> CONTACT
+          </a>
           <a href="https://instagram.com/stewpidly.good" target="_blank" rel="noreferrer" className="text-white/80 hover:text-mustard transition-colors" aria-label="Instagram">
             <Instagram size={18} />
           </a>
@@ -35,6 +37,9 @@ export function Nav() {
             {links.map(l => (
               <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="font-display text-sm text-white hover:text-mustard tracking-[0.15em]">{l.label}</a>
             ))}
+            <a href="mailto:hello@stewpidlygood.no" onClick={() => setOpen(false)} className="font-display text-sm text-mustard tracking-[0.15em] inline-flex items-center gap-2">
+              <Mail size={16} /> CONTACT
+            </a>
             <a href="https://instagram.com/stewpidly.good" target="_blank" rel="noreferrer" className="font-display text-sm text-mustard tracking-[0.15em] inline-flex items-center gap-2">
               <Instagram size={16} /> @STEWPIDLY.GOOD
             </a>

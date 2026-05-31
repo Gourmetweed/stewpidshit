@@ -101,7 +101,7 @@ export function Hero() {
           className="mt-9 flex flex-wrap items-center justify-center gap-3"
         >
           <motion.a
-            href="#contact"
+            href="mailto:hello@stewpidlygood.no"
             whileHover={{ scale: 1.03, boxShadow: "0 12px 30px -10px rgba(245,197,24,0.55)" }}
             whileTap={{ scale: 0.97 }}
             className="inline-flex items-center gap-2 bg-mustard text-charcoal font-display tracking-[0.15em] text-sm px-6 py-3.5 rounded-sm"

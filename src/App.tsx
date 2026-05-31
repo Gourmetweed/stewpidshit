@@ -6,7 +6,6 @@ import { FeaturedBowl } from "@/components/sections/FeaturedBowl";
 import { Festivals } from "@/components/sections/Festivals";
 import { Story } from "@/components/sections/Story";
 import { Gallery } from "@/components/sections/Gallery";
-import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/sections/Footer";
 import { Unsubscribe } from "@/components/Unsubscribe";
 
@@ -45,7 +44,6 @@ export default function App() {
         <Festivals />
         <Story />
         <Gallery />
-        <Contact />
       </main>
       <Footer />
     </div>
