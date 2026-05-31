@@ -8,8 +8,18 @@ import { Story } from "@/components/sections/Story";
 import { Gallery } from "@/components/sections/Gallery";
 import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/sections/Footer";
+import { Unsubscribe } from "@/components/Unsubscribe";
 
 export default function App() {
+  const isUnsubscribe = typeof window !== "undefined" && window.location.pathname.startsWith("/unsubscribe");
+  if (isUnsubscribe) {
+    return (
+      <>
+        <Toaster theme="dark" position="top-center" />
+        <Unsubscribe />
+      </>
+    );
+  }
   return (
     <div className="min-h-screen bg-charcoal text-white">
       <Toaster

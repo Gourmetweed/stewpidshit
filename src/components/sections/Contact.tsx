@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Instagram, Mail, Send } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
 
 const schema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100),
@@ -15,7 +16,7 @@ export function Contact() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", details: "" });
   const [loading, setLoading] = useState(false);
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     const parsed = schema.safeParse(form);
     if (!parsed.success) {
@@ -23,11 +24,41 @@ export function Contact() {
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const id = crypto.randomUUID();
+      const { error: insertError } = await supabase
+        .from("bookings")
+        .insert({ id, ...parsed.data });
+      if (insertError) throw insertError;
+
+      // Notify the business (always fire, but don't block UX if it errors)
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "booking-notification",
+          recipientEmail: "hello@stewpidlygood.no",
+          idempotencyKey: `booking-notify-${id}`,
+          templateData: parsed.data,
+        },
+      });
+
+      // Auto-confirmation to submitter
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "booking-confirmation",
+          recipientEmail: parsed.data.email,
+          idempotencyKey: `booking-confirm-${id}`,
+          templateData: { name: parsed.data.name },
+        },
+      });
+
       toast.success("REQUEST SENT — WE'LL BE IN TOUCH");
       setForm({ name: "", email: "", phone: "", details: "" });
-    }, 700);
+    } catch (err) {
+      console.error(err);
+      toast.error("SOMETHING WENT WRONG — TRY AGAIN");
+    } finally {
+      setLoading(false);
+    }
   }
 
   const input = "w-full bg-white/[0.03] border border-mustard/25 text-white placeholder:text-white/30 px-4 py-3.5 font-display text-sm tracking-wide rounded-sm focus:border-mustard focus:outline-none transition-colors";
