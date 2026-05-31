@@ -58,7 +58,7 @@ export function Festivals() {
         </div>
 
         <motion.a
-          href="#contact"
+          href="mailto:hello@stewpidlygood.no"
           whileHover={{ scale: 1.04, boxShadow: "0 12px 30px -10px rgba(245,197,24,0.6)" }}
           whileTap={{ scale: 0.97 }}
           className="mt-12 inline-flex items-center gap-2 bg-mustard text-charcoal font-display tracking-[0.2em] text-sm px-8 py-4 rounded-sm"
